@@ -1,0 +1,63 @@
+-- Lab SQL Joins on multiple tables --
+
+use sakila;
+select st.store_id, ci.city, co.country
+from store st
+join address ad
+on st.address_id = ad.address_id
+join city ci
+on ad.city_id = ci.city_id
+join country co
+on ci.country_id = co.country_id;
+
+select st.store_id, sum(pa.amount) as total_revenue from store st
+join payment pa
+on st.manager_staff_id = pa.staff_id
+group by st.store_id;
+
+select ca.name, round(avg(f.length),0) as avg_film_length
+from category ca
+left join film_category fca
+on ca.category_id = fca.category_id
+join film f
+on fca.film_id = f.film_id
+group by ca.category_id
+order by avg_film_length desc;
+
+select ca.name, round(avg(f.length),0) as avg_film_length
+from category ca
+left join film_category fca
+on ca.category_id = fca.category_id
+join film f
+on fca.film_id = f.film_id
+group by ca.category_id
+order by avg_film_length desc
+limit 3;
+
+select f.title, count(re.rental_id) as rentals_count
+from film f
+left join inventory i
+on f.film_id = i.film_id
+join rental re
+on i.inventory_id = re.inventory_id
+group by f.film_id
+order by rentals_count desc;
+
+select ca.name, sum(pa.amount) as total_revenue
+from category ca
+left join film_category fc
+on ca.category_id = fc.category_id
+join inventory i
+on fc.film_id = i.film_id
+join rental re
+on i.inventory_id = re.inventory_id
+join payment pa
+on re.rental_id = pa.rental_id
+group by ca.name
+order by total_revenue desc
+limit 5;
+
+select f.title, inv.store_id from film f
+join inventory inv
+on f.film_id = inv.film_id
+where f.title = 'Academy Dinosaur' and inv.store_id = 1;

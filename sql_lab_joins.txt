@@ -1,0 +1,29 @@
+-- Lab SQL JOINS --
+
+use sakila;
+select fc.category_id, c.name as category_name, count(*) as film_count from film_category fc
+join category c
+on fc.category_id = c.category_id
+group by category_id
+order by film_count desc;
+
+select s.first_name, s.last_name, a.address from staff s
+join address a
+on s.address_id = a.address_id;
+
+select s.first_name, s.last_name, sum(p.amount) as total_payment from staff s
+join payment p
+on p.staff_id = s.staff_id
+group by s.staff_id;
+
+select f.title, count(fa.actor_id) count_actor from film f
+left join film_actor fa
+on f.film_id = fa.film_id
+group by f.film_id
+order by count_actor desc;
+
+select c.first_name, c.last_name, sum(p.amount) as total_payment from customer c
+left join payment p
+on c.customer_id = p.customer_id
+group by c.customer_id
+order by c.last_name;
