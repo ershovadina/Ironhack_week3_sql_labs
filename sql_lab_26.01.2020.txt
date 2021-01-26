@@ -1,0 +1,31 @@
+-- Lab SQL --
+
+-- query 1
+
+select *, concat(last_name, ' ', first_name) as full_name, length(FIRST_NAME)+length(last_name) as combined_length from customer
+order by combined_length, full_name, id;
+
+-- query 4
+
+select d.id, d.name, count(e.id) as count_employees from department d
+left join employee e
+on d.id=e.dept_id
+group by d.name
+order by count_employees desc, name;
+
+-- query 5
+
+select e.id, eu.uin, e.name, e.age from employee e
+join employee_uin eu
+on e.id=eu.id
+where e.age < 25
+order by e.name, e.id;
+
+-- query 8
+
+select e1.name, e2.name from employee e1
+join employee e2
+on e1.id<>e2.id
+and e1.id<e2.id
+where e1.salary<e2.salary
+order by e1.id, e2.salary;
