@@ -1,0 +1,47 @@
+-- Lab | SQL Rolling calculations --
+
+-- 1 Get number of monthly active customers.
+
+use sakila;
+create or replace view activity as
+select r.*, c.active, date_format(rental_date, '%m') as Activity_month, date_format(rental_date, '%Y') as Activity_year from rental r
+join customer c
+on r.customer_id = c.customer_id;
+
+select * from activity;
+
+create or replace view distinct_activity as
+select distinct customer_id, Activity_month, Activity_year from activity
+where active = 1;
+
+select * from distinct_activity;
+
+create or replace view active_per_month as
+select Activity_month, Activity_year, count(customer_id) as total_clients
+from distinct_activity
+group by Activity_year, Activity_month
+order by total_clients desc;
+
+select * from active_per_month;
+
+-- 2 Active users in the previous month.
+
+select * from active_per_month a1
+join active_per_month a2
+on a1.Activity_month = a2.Activity_month+1;
+
+-- 3 Percentage change in the number of active customers.
+
+select a1.Activity_month as month, a1.total_clients as customers_month, a2.Activity_month as prev_month, a2.total_clients as customers_prev_month,
+round((a1.total_clients-a2.total_clients)/a2.total_clients*100,0) as percentage_change
+from active_per_month a1
+join active_per_month a2
+on a1.Activity_month = a2.Activity_month+1;
+
+-- 4 Retained customers every month.
+
+select * from distinct_activity d1
+join distinct_activity d2
+on d1.customer_id = d2.customer_id
+and d1.Activity_month = d2.Activity_month+1
+order by d1.Activity_year, d1.Activity_month, d1.customer_id;
